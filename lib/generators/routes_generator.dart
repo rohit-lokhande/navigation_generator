@@ -38,6 +38,16 @@ class RoutesGenerator extends MergingGenerator<ClassDefinition?, AppRoute> {
       buffer.writeln("import '${values!.classPath}';");
     }
     buffer.writeln('class Routes {');
+
+    buffer.writeln(
+        'static void pop(BuildContext context){Navigator.pop(context);}');
+
+    buffer.writeln(
+        ' static void _navigate(BuildContext context,Widget child){');
+    buffer.write('Navigator.push(');
+    buffer.write('context,');
+    buffer.write('MaterialPageRoute(builder: (context) => child));}');
+
     for (final value in classes) {
       buffer.writeln("//${value!.description}");
       if (value.fields!.isNotEmpty) {
@@ -48,20 +58,19 @@ class RoutesGenerator extends MergingGenerator<ClassDefinition?, AppRoute> {
         buffer.write(constructorParameters.join(","));
         buffer.write("){");
         buffer.writeln(
-            "Navigator.push(context,MaterialPageRoute(builder: (context) =>  ${value.constructors!.first.displayName}(");
-        List<String> parameters =
-            _getParameterList(value.constructors!.first.parameters);
+            "_navigate(context,${value.constructors!.first.displayName}(");
+            List<String> parameters =
+        _getParameterList(value.constructors!.first.parameters);
         buffer.write(parameters.join(","));
-        buffer.write(')),);');
+        buffer.writeln("));");
         buffer.writeln('}');
       } else {
         buffer.writeln(
             'static void navigateTo${value.constructors!.first.displayName}(BuildContext context,');
         buffer.write("){");
         buffer.writeln(
-            "Navigator.push(context,MaterialPageRoute(builder: (context) =>  ${value.constructors!.first.displayName}(");
-        buffer.write(')),);');
-        buffer.writeln('}');
+            "_navigate(context,${value.constructors!.first.displayName}());");
+        buffer.writeln("}");
       }
     }
     buffer.writeln('}');
