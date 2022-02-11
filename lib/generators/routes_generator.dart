@@ -31,25 +31,36 @@ class RoutesGenerator extends MergingGenerator<ClassDefinition?, AppRoute> {
   FutureOr<String> generateMergedContent(
       Stream<ClassDefinition?> stream) async {
     final buffer = StringBuffer();
+
+    /// material import required for access BuildContext
     buffer.writeln("import 'package:flutter/material.dart';");
     List<ClassDefinition?> classes = [];
     await for (final values in stream) {
       classes.add(values);
+
+      /// import required files for access generated code
       buffer.writeln("import '${values!.classPath}';");
     }
+
+    ///class name
     buffer.writeln('class Routes {');
 
+    ///method to pop user using provided context
     buffer.writeln(
         'static void pop(BuildContext context){Navigator.pop(context);}');
 
-    buffer.writeln(
-        ' static void _navigate(BuildContext context,Widget child){');
+    ///common and private method to navigate all method call this method for navigation
+    buffer
+        .writeln(' static void _navigate(BuildContext context,Widget child){');
     buffer.writeln('Navigator.push(');
     buffer.writeln('context,');
     buffer.writeln('MaterialPageRoute(builder: (context) => child));}');
 
     for (final value in classes) {
-      buffer.writeln("//${value!.description}");
+      /// description of the class
+      if (value!.description!.isNotEmpty) {
+        buffer.writeln("//${value.description}");
+      }
 
       if (value.fields!.isNotEmpty) {
         buffer.writeln(
@@ -60,8 +71,8 @@ class RoutesGenerator extends MergingGenerator<ClassDefinition?, AppRoute> {
         buffer.write("){");
         buffer.writeln(
             "_navigate(context,${value.constructors!.first.displayName}(");
-            List<String> parameters =
-        _getParameterList(value.constructors!.first.parameters);
+        List<String> parameters =
+            _getParameterList(value.constructors!.first.parameters);
         buffer.write(parameters.join(","));
         buffer.writeln("));");
         buffer.writeln('}');
@@ -78,13 +89,12 @@ class RoutesGenerator extends MergingGenerator<ClassDefinition?, AppRoute> {
     return buffer.toString();
   }
 
+  /// _getParameterList return List<String> which contains parameters required for passing to widget to be navigated
   List<String> _getParameterList(List<ParameterElement> parameterElement) {
     List<String> parameters = [];
     for (var e in parameterElement) {
       if (e.name.toLowerCase() != 'key') {
-        if (e.isOptional) {
-          parameters.add("${e.name}: ${e.name}");
-        } else if (e.isRequiredNamed) {
+        if (e.isOptional || e.isRequiredNamed) {
           parameters.add("${e.name}: ${e.name}");
         } else {
           parameters.add(e.name);
@@ -94,20 +104,37 @@ class RoutesGenerator extends MergingGenerator<ClassDefinition?, AppRoute> {
     return parameters;
   }
 
+  /// _getConstructorParameters return List<String> which contains parameters required to build method constructor
   List<String> _getConstructorParameters(List<ParameterElement> parameters) {
     List<String> constructorParameters = [];
     for (var e in parameters) {
+      String value = '';
       if (e.type.isDartCoreString) {
-        constructorParameters.add('String ${e.displayName}');
+        value = 'String ${e.displayName}';
+        if (e.isOptional) {
+          value = 'String? ${e.displayName}';
+        }
       } else if (e.type.isDartCoreInt) {
-        constructorParameters.add('int ${e.displayName}');
+        value = 'int ${e.displayName}';
+        if (e.isOptional) {
+          value = 'int? ${e.displayName}';
+        }
       } else if (e.type.isDartCoreBool) {
-        constructorParameters.add('bool ${e.displayName}');
+        value = 'bool ${e.displayName}';
+        if (e.isOptional) {
+          value = 'bool? ${e.displayName}';
+        }
       } else if (e.type.isDartCoreDouble) {
-        constructorParameters.add('double ${e.displayName}');
+        value = 'double ${e.displayName}';
+        if (e.isOptional) {
+          value = 'double? ${e.displayName}';
+        }
       } else if (e.type.isDartCoreList || e.type.isDartCoreObject) {
-        constructorParameters.add(
-            '${e.type.getDisplayString(withNullability: false)} ${e.displayName}');
+        value =
+            '${e.type.getDisplayString(withNullability: true)} ${e.displayName}';
+      }
+      if (value.isNotEmpty) {
+        constructorParameters.add(value);
       }
     }
     return constructorParameters;
