@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart' show BuildStep;
 import 'package:merging_builder/merging_builder.dart';
-import 'package:route_generator/annotations/annotations.dart';
-import 'package:route_generator/models/class_definition.dart';
+import 'package:navigation_generator/annotations/annotations.dart';
+import 'package:navigation_generator/models/class_definition.dart';
 import 'package:source_gen/source_gen.dart';
 
-class RoutesGenerator extends MergingGenerator<ClassDefinition?, AppRoute> {
+class NavigationGenerator extends MergingGenerator<ClassDefinition?, Navigation> {
   @override
   ClassDefinition? generateStreamItemForAnnotatedElement(
     Element element,
@@ -43,7 +43,7 @@ class RoutesGenerator extends MergingGenerator<ClassDefinition?, AppRoute> {
     }
 
     ///class name
-    buffer.writeln('class Routes {');
+    buffer.writeln('class AppNavigation {');
 
     ///method to pop user using provided context
     buffer.writeln(

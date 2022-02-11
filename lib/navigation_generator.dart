@@ -1,4 +1,4 @@
-library route_generator;
+library navigation_generator;
 
 export 'annotations/annotations.dart';
 export 'builders/builder.dart';

@@ -1,7 +1,7 @@
 builders:
-  route_builder:
-    import: "package:route_generator/builders/builder.dart"
-    builder_factories: ["routeBuilder"]
+  navigation_builder:
+    import: "package:navigation_generator/builders/builder.dart"
+    builder_factories: ["navigationBuilder"]
     build_extensions: {"lib/$lib$": ["lib/output.dart"]}
     auto_apply: root_package
     build_to: source

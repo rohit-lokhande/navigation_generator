@@ -1,4 +1,4 @@
-name: route_generator
+name: navigation_generator
 description: Flutter package create routes into single file for navigation
 version: 0.0.1
 homepage:
