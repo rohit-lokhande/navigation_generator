@@ -44,12 +44,13 @@ class RoutesGenerator extends MergingGenerator<ClassDefinition?, AppRoute> {
 
     buffer.writeln(
         ' static void _navigate(BuildContext context,Widget child){');
-    buffer.write('Navigator.push(');
-    buffer.write('context,');
-    buffer.write('MaterialPageRoute(builder: (context) => child));}');
+    buffer.writeln('Navigator.push(');
+    buffer.writeln('context,');
+    buffer.writeln('MaterialPageRoute(builder: (context) => child));}');
 
     for (final value in classes) {
       buffer.writeln("//${value!.description}");
+
       if (value.fields!.isNotEmpty) {
         buffer.writeln(
             'static void navigateTo${value.constructors!.first.displayName}(BuildContext context,');
@@ -96,8 +97,8 @@ class RoutesGenerator extends MergingGenerator<ClassDefinition?, AppRoute> {
   List<String> _getConstructorParameters(List<ParameterElement> parameters) {
     List<String> constructorParameters = [];
     for (var e in parameters) {
-      if (e.type.isDartCoreString && e.isOptional) {
-        constructorParameters.add('String? ${e.displayName}');
+      if (e.type.isDartCoreString) {
+        constructorParameters.add('String ${e.displayName}');
       } else if (e.type.isDartCoreInt) {
         constructorParameters.add('int ${e.displayName}');
       } else if (e.type.isDartCoreBool) {
