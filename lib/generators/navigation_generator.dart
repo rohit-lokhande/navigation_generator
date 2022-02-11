@@ -58,7 +58,7 @@ class NavigationGenerator extends MergingGenerator<ClassDefinition?, Navigation>
 
     for (final value in classes) {
       /// description of the class
-      if (value!.description!.isNotEmpty) {
+      if (value!.description != null && value.description!.isNotEmpty) {
         buffer.writeln("//${value.description}");
       }
 
