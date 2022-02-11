@@ -1,7 +1,6 @@
 library route_generator;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'annotations/annotations.dart';
+export 'builders/builder.dart';
+export 'models/models.dart';
+export 'generators/generators.dart';
